@@ -5,10 +5,14 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.deltoi.app.entity.Query;
-import com.deltoi.app.entity.QueryStatus;
 
+/**
+ * Repository for Query entity, providing CRUD operations.
+ */
 public interface QueryRepository extends JpaRepository<Query, Long> {
-    List<Query> findByUserIdAndStatus(Long userId, QueryStatus status);
-    List<Query> findByUserIdAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-        Long userId, String title, String description);
+    // Custom method to find queries by user
+    List<Query> findByUserId(Long userId);
+
+    // Optional method to find by status (for archive/trash)
+    List<Query> findByStatus(String status);
 }

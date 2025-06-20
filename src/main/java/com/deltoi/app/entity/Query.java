@@ -4,45 +4,45 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entity representing a query in the deltoi application.
+ */
 @Entity
 @Table(name = "queries")
-@Getter
+@Data
 @NoArgsConstructor
-public final class Query {
+public class Query {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "title", nullable = false, length = 255)
     private String title;
 
-    @Column
+    @Column(name = "description", nullable = true, length = 255)
     private String description;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private QueryStatus status;
+    @Column(name = "status", nullable = false, length = 255)
+    private String status; // PENDING, ARCHIVED, TRASH
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public Query(String title, String description, QueryStatus status, User user) {
+    public Query(String title, String description, String status, User user) {
         this.title = title;
         this.description = description;
         this.status = status;
