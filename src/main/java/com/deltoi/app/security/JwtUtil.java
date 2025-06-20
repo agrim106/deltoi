@@ -18,19 +18,19 @@ public final class JwtUtil {
     @Value("${jwt.expiration}")
     private Long expiration;
 
-    public String generateToken(String username) {
+    public String generateToken(String email) { // Changed from username to email
         return JWT.create()
-            .withSubject(username)
+            .withSubject(email) // Use email as the subject
             .withIssuedAt(new Date())
             .withExpiresAt(new Date(System.currentTimeMillis() + expiration))
             .sign(Algorithm.HMAC512(secret));
     }
 
-    public String getUsernameFromToken(String token) {
+    public String getUsernameFromToken(String token) { // Renamed for clarity, still extracts email
         DecodedJWT decoded = JWT.require(Algorithm.HMAC512(secret))
             .build()
             .verify(token);
-        return decoded.getSubject();
+        return decoded.getSubject(); // Returns email
     }
 
     public boolean validateToken(String token) {

@@ -6,7 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.deltoi.app.entity.User;
 
+/**
+ * Repository for User entity.
+ */
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByUsername(String username);
-    Optional<User> findByEmail(String email);
+    Optional<User> findByEmail(String email); // Replace findByUsername with findByEmail
+    // Remove Optional<User> findByUsername(String username); if present
 }
