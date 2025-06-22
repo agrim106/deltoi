@@ -1,6 +1,9 @@
 package com.deltoi.app.service;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,20 +26,27 @@ public class QueryService {
     @Autowired
     private UserRepository userRepository;
 
+    // Define valid status values based on your database constraint
+    private static final Set<String> VALID_STATUSES = new HashSet<>(Arrays.asList("PENDING", "TRASH", "ARCHIVED"));
+
     /**
      * Adds a new query for the authenticated user.
      * @param title The query title
      * @param description The query description
      * @param status The initial status (e.g., PENDING)
      * @return The saved Query entity
-     * @throws RuntimeException if user is not found
+     * @throws RuntimeException if user is not found or status is invalid
      */
     public Query addQuery(String title, String description, String status) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found: " + email));
 
-        Query query = new Query(title, description, status, user);
+        if (status != null && !VALID_STATUSES.contains(status.toUpperCase())) {
+            throw new RuntimeException("Invalid status value: " + status + ". Allowed values are PENDING, TRASH, ARCHIVED.");
+        }
+
+        Query query = new Query(title, description, status != null ? status.toUpperCase() : "PENDING", user);
         return queryRepository.save(query);
     }
 
@@ -58,7 +68,7 @@ public class QueryService {
      * @param description The new description
      * @param status The new status
      * @return The updated Query entity
-     * @throws RuntimeException if query or user not found
+     * @throws RuntimeException if query or user not found or status is invalid
      */
     public Query updateQuery(Long id, String title, String description, String status) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -71,9 +81,15 @@ public class QueryService {
             throw new RuntimeException("Query does not belong to the authenticated user");
         }
 
-        query.setTitle(title);
-        query.setDescription(description);
-        query.setStatus(status);
+        if (status != null && !VALID_STATUSES.contains(status.toUpperCase())) {
+            throw new RuntimeException("Invalid status value: " + status + ". Allowed values are PENDING, TRASH, ARCHIVED.");
+        }
+
+        query.setTitle(title != null ? title : query.getTitle());
+        query.setDescription(description != null ? description : query.getDescription());
+        if (status != null) {
+            query.setStatus(status.toUpperCase());
+        }
         return queryRepository.save(query);
     }
 
