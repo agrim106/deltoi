@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.deltoi.app.dto.QueryDto;
@@ -85,6 +86,42 @@ public class QueryController {
     public ResponseEntity<Void> permanentDelete(@PathVariable Long id) {
         queryService.permanentDelete(id);
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Archives a query for the authenticated user.
+     * @param id The query ID
+     * @return ResponseEntity with the updated Query
+     */
+    @PostMapping("/archive/{id}")
+    public ResponseEntity<QueryDto> archiveQuery(@PathVariable Long id) {
+        Query query = queryService.archiveQuery(id);
+        QueryDto responseDto = mapToDto(query);
+        return ResponseEntity.ok(responseDto);
+    }
+
+    /**
+     * Restores a query for the authenticated user.
+     * @param id The query ID
+     * @return ResponseEntity with the updated Query
+     */
+    @PostMapping("/restore/{id}")
+    public ResponseEntity<QueryDto> restoreQuery(@PathVariable Long id) {
+        Query query = queryService.restoreQuery(id);
+        QueryDto responseDto = mapToDto(query);
+        return ResponseEntity.ok(responseDto);
+    }
+
+    /**
+     * Searches queries for the authenticated user by keyword.
+     * @param keyword The search keyword
+     * @return ResponseEntity with a list of Query DTOs
+     */
+    @GetMapping("/search")
+    public ResponseEntity<List<QueryDto>> searchQueries(@RequestParam String keyword) {
+        List<Query> queries = queryService.searchQueries(keyword);
+        List<QueryDto> dtoList = queries.stream().map(this::mapToDto).collect(Collectors.toList());
+        return ResponseEntity.ok(dtoList);
     }
 
     /**

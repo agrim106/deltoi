@@ -46,6 +46,7 @@ public class QueryService {
             throw new RuntimeException("Invalid status value: " + status + ". Allowed values are PENDING, TRASH, ARCHIVED.");
         }
 
+        // Use the constructor that initializes createdAt
         Query query = new Query(title, description, status != null ? status.toUpperCase() : "PENDING", user);
         return queryRepository.save(query);
     }
@@ -116,6 +117,69 @@ public class QueryService {
 
         query.setStatus("TRASH");
         return queryRepository.save(query);
+    }
+
+    /**
+     * Archives a query for the authenticated user (moves from PENDING or re-archives ARCHIVED).
+     * @param id The query ID
+     * @return The updated Query entity
+     * @throws RuntimeException if query or user not found
+     */
+    public Query archiveQuery(Long id) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found: " + email));
+
+        Query query = queryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Query not found: " + id));
+        if (!query.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Query does not belong to the authenticated user");
+        }
+
+        if (!"PENDING".equals(query.getStatus()) && !"ARCHIVED".equals(query.getStatus())) {
+            throw new RuntimeException("Only PENDING or ARCHIVED queries can be archived");
+        }
+
+        query.setStatus("ARCHIVED");
+        return queryRepository.save(query);
+    }
+
+    /**
+     * Restores a query for the authenticated user (moves from ARCHIVED or TRASH to PENDING).
+     * @param id The query ID
+     * @return The updated Query entity
+     * @throws RuntimeException if query or user not found
+     */
+    public Query restoreQuery(Long id) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found: " + email));
+
+        Query query = queryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Query not found: " + id));
+        if (!query.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Query does not belong to the authenticated user");
+        }
+
+        if (!"ARCHIVED".equals(query.getStatus()) && !"TRASH".equals(query.getStatus())) {
+            throw new RuntimeException("Only ARCHIVED or TRASHed queries can be restored");
+        }
+
+        query.setStatus("PENDING");
+        return queryRepository.save(query);
+    }
+
+    /**
+     * Searches queries for the authenticated user by keyword in title or description.
+     * @param keyword The search keyword
+     * @return List of matching Query entities
+     * @throws RuntimeException if user is not found
+     */
+    public List<Query> searchQueries(String keyword) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found: " + email));
+        return queryRepository.findByUserIdAndKeyword(user.getId(), keyword.toLowerCase());
     }
 
     /**
