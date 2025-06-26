@@ -1,0 +1,39 @@
+<div class="auth-container">
+  <div class="left-column">
+    <h1>Deltoi</h1>
+    <p>Your secure query tracking solution</p>
+    <h2>Welcome to Deltoi</h2>
+    <p>Manage your queries with ease and security.</p>
+  </div>
+  <div class="right-column">
+    <div class="tabs">
+      <a routerLink="/login" class="active">Login</a>
+      <a routerLink="/signup">Sign Up</a>
+    </div>
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+      <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" placeholder="ENTER YOUR EMAIL">
+        <mat-icon matPrefix>email</mat-icon>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Password</mat-label>
+        <input matInput formControlName="password" type="password" placeholder="ENTER YOUR PASSWORD">
+        <mat-icon matPrefix>lock</mat-icon>
+      </mat-form-field>
+      <div class="options">
+        <mat-checkbox color="primary">Remember me</mat-checkbox>
+        <a href="#">Forgot Password?</a>
+      </div>
+      <button mat-raised-button color="primary" type="submit">LOGIN</button>
+      <mat-error *ngIf="error">{{ error }}</mat-error>
+    </form>
+    <div class="divider">
+      <span>or continue with</span>
+    </div>
+    <div class="social-buttons">
+      <button mat-icon-button><mat-icon>google</mat-icon> Google</button>
+      <button mat-icon-button><mat-icon>github</mat-icon> GitHub</button>
+    </div>
+  </div>
+</div>

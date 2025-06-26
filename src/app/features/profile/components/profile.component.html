@@ -1,0 +1,11 @@
+<div class="profile-container">
+  <h2>User Profile</h2>
+  <div *ngIf="user as u">
+    <p><strong>Username:</strong> {{ u.username }}</p>
+    <p><strong>Email:</strong> {{ u.email }}</p>
+    <p><strong>Joined:</strong> {{ u.createdAt | date }}</p>
+  </div>
+  <div *ngIf="!user">
+    <mat-spinner></mat-spinner>
+  </div>
+</div>

@@ -1,0 +1,33 @@
+<div class="auth-container">
+  <div class="left-column">
+    <h1>Deltoi</h1>
+    <p>Your secure query tracking solution</p>
+    <h2>Welcome to Deltoi</h2>
+    <p>Manage your queries with ease and security.</p>
+  </div>
+  <div class="right-column">
+    <div class="tabs">
+      <a routerLink="/login">Login</a>
+      <a routerLink="/signup" class="active">Sign Up</a>
+    </div>
+    <form [formGroup]="signupForm" (ngSubmit)="onSignup()">
+      <mat-form-field appearance="fill">
+        <mat-label>Username</mat-label>
+        <input matInput formControlName="username" placeholder="ENTER YOUR USERNAME">
+        <mat-icon matPrefix>person</mat-icon>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" placeholder="ENTER YOUR EMAIL">
+        <mat-icon matPrefix>email</mat-icon>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Password</mat-label>
+        <input matInput formControlName="password" type="password" placeholder="ENTER YOUR PASSWORD">
+        <mat-icon matPrefix>lock</mat-icon>
+      </mat-form-field>
+      <button mat-raised-button color="primary" type="submit">SIGN UP</button>
+      <mat-error *ngIf="error">{{ error }}</mat-error>
+    </form>
+  </div>
+</div>

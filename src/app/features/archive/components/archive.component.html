@@ -1,0 +1,22 @@
+<div class="archive-container">
+  <h2>Archived Queries</h2>
+  <table mat-table [dataSource]="archivedQueries" class="mat-elevation-z8">
+    <ng-container matColumnDef="title">
+      <th mat-header-cell *matHeaderCellDef>Title</th>
+      <td mat-cell *matCellDef="let query">{{ query.title }}</td>
+    </ng-container>
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef>Description</th>
+      <td mat-cell *matCellDef="let query">{{ query.description }}</td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let query">
+        <button mat-button color="primary" (click)="restore(query)">Restore</button>
+        <button mat-button color="warn" (click)="moveToTrash(query)">Trash</button>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="['title', 'description', 'actions']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['title', 'description', 'actions'];"></tr>
+  </table>
+</div>
